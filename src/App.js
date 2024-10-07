@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Children, useState } from "react";
 
 const tempMovieData = [
   {
@@ -52,26 +52,38 @@ const average = (arr) =>
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
   return (
     <>
-      <Navbar movies={movies} />
-      <Main movies={movies} />
+      <Navbar>
+        <Search />
+        <NumResult movies={movies} />
+      </Navbar>
+      <Main>
+        <Box>
+          <Movies movies={movies} />
+        </Box>
+        <Box>
+          <Summary watched={watched} />
+          <Watches watched={watched} />
+        </Box>
+      </Main>
     </>
   );
 }
 
-function Main({ movies }) {
-  return <main className="main">
-    <MovieList movies={movies} />
-    <WatchList />
-  </main>
+function Main({ children }) {
+  return (
+    <main className="main">
+      {children}
+    </main>
+  )
 }
 
-function Navbar({ movies }) {
+function Navbar({ children }) {
   return <nav className="nav-bar">
     <Logo />
-    <Search />
-    <NumResult movies={movies} />
+    {children}
   </nav>
 }
 
@@ -99,18 +111,18 @@ function Search() {
   />
 }
 
-function MovieList({ movies }) {
-  const [isOpen1, setIsOpen1] = useState(true);
+function Box({ children }) {
+  const [isOpen, setIsOpen] = useState(true);
 
   return <div className="box">
     <button
       className="btn-toggle"
-      onClick={() => setIsOpen1((open) => !open)}
+      onClick={() => setIsOpen((open) => !open)}
     >
-      {isOpen1 ? "–" : "+"}
+      {isOpen ? "–" : "+"}
     </button>
-    {isOpen1 && (
-      <Movies movies={movies} />
+    {isOpen && (
+      children
     )}
   </div>
 }
@@ -130,26 +142,6 @@ function Movies({ movies }) {
       </li>
     ))}
   </ul>
-}
-
-function WatchList() {
-  const [watched, setWatched] = useState(tempWatchedData);
-  const [isOpen2, setIsOpen2] = useState(true);
-
-  return <div className="box">
-    <button
-      className="btn-toggle"
-      onClick={() => setIsOpen2((open) => !open)}
-    >
-      {isOpen2 ? "–" : "+"}
-    </button>
-    {isOpen2 && (
-      <>
-        <Summary watched={watched} />
-        <Watches watched={watched} />
-      </>
-    )}
-  </div>
 }
 
 function Summary({ watched }) {
