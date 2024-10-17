@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { KEY } from "../constants/Conts";
 import { Loader } from "./Loader";
+import StarRating from "./StarRating";
 
-export function MovieDetails({ selectedId, onCloseMovie }) {
+export function MovieDetails({ selectedId, onCloseMovie, onAddwatched }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [userRating, setUserRating] = useState("");
 
   const {
     Title: title,
@@ -18,6 +20,20 @@ export function MovieDetails({ selectedId, onCloseMovie }) {
     Director: director,
     Genre: genre,
   } = movie;
+
+  function handleAddWatched() {
+    const newWatchedMovie = {
+      imdbID: selectedId,
+      title,
+      year,
+      poster,
+      imdbRating: Number(imdbRating),
+      runtime: Number(runtime.split(" ").at(0)),
+      // userRating,
+    };
+    onAddwatched(newWatchedMovie);
+    onCloseMovie();
+  }
 
   useEffect(
     function () {
@@ -58,6 +74,12 @@ export function MovieDetails({ selectedId, onCloseMovie }) {
             </div>
           </header>
           <section>
+            <div className="rating">
+              <StarRating maxRating={10} size={24} />
+              <button className="btn-add" onClick={handleAddWatched}>
+                + Add to list
+              </button>
+            </div>
             <p>
               <em>{plot}</em>
             </p>
